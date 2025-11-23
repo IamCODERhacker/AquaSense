@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="AquaSense — Smart irrigation that saves water, boosts yield, and runs itself." />
+  <title>AquaSense | Smart Irrigation System</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg:#0b132b;
+      --bg-2:#1c2541;
+      --bg-3:#3a506b;
+      --accent:#0ef0b5;
+      --accent-2:#6ef7ff;
+      --text:#eaf2ff;
+      --muted:#c7d3e8;
+      --card:#111a35;
+      --success:#24d67b;
+      --warning:#ffd166;
+      --danger:#ef476f;
+      --shadow: 0 20px 50px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:linear-gradient(135deg,var(--bg),var(--bg-2));color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+
+    /* Layout */
+    .container{max-width:1100px;margin:0 auto;padding:0 1.2rem}
+    header{position:sticky;top:0;z-index:50;background:rgba(12,20,50,.6);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08)}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:.8rem 0}
+    .brand{display:flex;align-items:center;gap:.7rem;font-weight:800;letter-spacing:.4px}
+    .logo{width:38px;height:38px;border-radius:10px;background:
+      conic-gradient(from 180deg,var(--accent),var(--accent-2),#9efcff,var(--accent));
+      box-shadow:0 8px 20px rgba(110,247,255,.35)}
+    .nav-links{display:flex;gap:1.2rem}
+    .nav a{padding:.5rem .8rem;border-radius:8px}
+    .nav a:hover{background:rgba(255,255,255,.08)}
+
+    /* Hero */
+    .hero{position:relative;overflow:hidden}
+    .hero-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:2rem;align-items:center;padding:3rem 0}
+    .eyebrow{display:inline-block;color:var(--accent);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.6rem}
+    .title{font-family:"Space Grotesk",Inter,sans-serif;font-weight:800;line-height:1.05;font-size:clamp(2rem,3.8vw,3.6rem);margin:0 0 .8rem}
+    .subtitle{color:var(--muted);font-size:1.05rem;max-width:45ch}
+    .cta{display:flex;gap:1rem;margin-top:1.4rem}
+    .btn{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#042b2b;border:0;font-weight:800;border-radius:12px;padding:.9rem 1.1rem;box-shadow:var(--shadow);
+    }
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,.18);color:var(--text)}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.6rem}
+    .metric{background:linear-gradient(180deg,var(--card),#0d1733);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:1rem}
+    .metric h4{margin:.2rem 0;font-size:1.5rem}
+    .metric p{margin:.1rem 0;color:var(--muted)}
+
+    /* Visual */
+    .panel{
+      position:relative;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.08);
+      background:radial-gradient(1200px 800px at 20% 20%, rgba(110,247,255,.15), transparent 40%),
+                 linear-gradient(180deg,#0e1838,#0a1533);
+      box-shadow:var(--shadow);min-height:360px;
+    }
+    .rain{
+      position:absolute;inset:0;pointer-events:none;opacity:.35;
+      background-image: radial-gradient(circle at 10% 10%, rgba(110,247,255,.3) 2px, transparent 3px),
+                        radial-gradient(circle at 70% 40%, rgba(14,240,181,.3) 2px, transparent 3px),
+                        radial-gradient(circle at 40% 80%, rgba(158,252,255,.3) 2px, transparent 3px);
+      animation: drift 12s linear infinite;
+    }
+    @keyframes drift{0%{transform:translateY(0)}100%{transform:translateY(20px)}}
+
+    .gauge{
+      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+      width:min(90%,520px);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+      border-radius:16px;padding:1rem;
+    }
+    .gauge h4{margin:0 0 .6rem}
+    .gauge .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    .card{
+      background:linear-gradient(180deg,#0f1a39,#0a1430);border:1px solid rgba(255,255,255,.1);
+      border-radius:14px;padding:1rem
+    }
+    .dial{
+      height:140px;border-radius:12px;background:
+      conic-gradient(from 220deg,var(--danger) 0 15%, var(--warning) 15% 45%, var(--success) 45% 100%);
+      position:relative
+    }
+    .needle{
+      position:absolute;left:50%;top:50%;width:4px;height:62px;background:#fff;border-radius:2px;
+      transform-origin:50% 100%;box-shadow:0 0 10px rgba(255,255,255,.5)
+    }
+    .leds{display:flex;gap:.6rem;margin-top:.6rem}
+    .led{width:12px;height:12px;border-radius:50%;background:#222;border:1px solid rgba(255,255,255,.15)}
+    .led.on{background:var(--success)}
+    .slider{width:100%}
+    .badge{display:inline-block;padding:.3rem .6rem;border:1px solid rgba(255,255,255,.14);border-radius:999px;color:var(--muted);font-size:.9rem}
+
+    /* Sections */
+    section{padding:3rem 0;border-top:1px solid rgba(255,255,255,.06)}
+    .section-title{font-family:"Space Grotesk";font-size:1.8rem;margin:0 0 .8rem}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .feature{background:linear-gradient(180deg,var(--card),#0d1733);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:1rem}
+    .feature h4{margin:.6rem 0}
+    .pill{display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:.3rem .6rem;border-radius:999px;font-size:.85rem;color:var(--muted)}
+
+    .how{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .step{background:linear-gradient(180deg,var(--card),#0d1733);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:1rem}
+    .step .num{font-weight:800;color:var(--accent)}
+
+    .cta-band{background:linear-gradient(135deg,#0f1838,#0a1230);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:1.2rem;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+
+    /* Footer */
+    footer{padding:2.5rem 0;color:var(--muted)}
+    .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:1rem}
+    .foot small{display:block;margin-top:.6rem;color:#99a8c7}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .hero-wrap{grid-template-columns:1fr}
+      .metrics{grid-template-columns:repeat(2,1fr)}
+      .grid-3{grid-template-columns:repeat(2,1fr)}
+      .how{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:540px){
+      .metrics,.grid-3,.how{grid-template-columns:1fr}
+      .cta{flex-direction:column}
+    }
+
+    /* Accessibility */
+    :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    @media (prefers-reduced-motion: reduce){
+      .rain{animation:none}
+    }
+  </style>
+</head>
+<body>
+  <a class="pill" href="#main" style="position:absolute;left:-999px;top:-999px">Skip to content</a>
+
+  <!-- Header -->
+  <header role="banner" aria-label="AquaSense site header">
+    <div class="container nav">
+      <div class="brand" aria-label="AquaSense">
+        <div class="logo" aria-hidden="true"></div>
+        <span>AquaSense</span>
+      </div>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#demo">Live demo</a>
+        <a href="#contact" class="btn" style="padding:.5rem .8rem">Get a quote</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <main id="main" class="hero" role="main">
+    <div class="container hero-wrap">
+      <div>
+        <span class="eyebrow">Smart irrigation</span>
+        <h1 class="title">Save water. Grow more. Let the system think for you.</h1>
+        <p class="subtitle">
+          AquaSense measures soil moisture, weather, and crop needs in real-time—then waters exactly when and where it matters.
+          Cut waste, boost yield, and monitor everything from your phone.
+        </p>
+        <div class="cta" role="group" aria-label="Primary actions">
+          <a href="#demo" class="btn">Try the live demo</a>
+          <a href="#features" class="btn secondary">Explore features</a>
+        </div>
+        <div class="metrics" aria-label="Impact metrics">
+          <div class="metric" aria-live="polite">
+            <span class="badge">Water savings</span>
+            <h4>Up to 40%</h4>
+            <p>Precision scheduling reduces overwatering</p>
+          </div>
+          <div class="metric">
+            <span class="badge">Yield increase</span>
+            <h4>+18%</h4>
+            <p>Plants get ideal moisture at the root</p>
+          </div>
+          <div class="metric">
+            <span class="badge">Setup time</span>
+            <h4>One afternoon</h4>
+            <p>Plug-and-play sensors + guided app</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" aria-hidden="true">
+        <div class="rain"></div>
+        <div class="gauge" role="group" aria-label="Status overview">
+          <h4>Field status • Zone A</h4>
+          <div class="row">
+            <div class="card" aria-label="Soil moisture gauge">
+              <div class="dial">
+                <div id="needle" class="needle" style="transform:translate(-50%,-100%) rotate(35deg)"></div>
+              </div>
+              <div class="leds" aria-hidden="true">
+                <div class="led on"></div>
+                <div class="led"></div>
+                <div class="led"></div>
+              </div>
+              <p class="subtitle" style="margin-top:.4rem">Soil moisture: <span id="moistureLabel">Optimal (55%)</span></p>
+              <input id="moisture" class="slider" type="range" min="0" max="100" value="55" aria-label="Adjust simulated soil moisture" />
+            </div>
+
+            <div class="card" aria-label="Valve control and forecast">
+              <p><span class="badge">Valve</span> <strong id="valveState">Auto • On</strong></p>
+              <p class="subtitle" id="advice">Maintaining optimal moisture for tomatoes.</p>
+              <div style="display:flex;gap:.6rem;margin:.6rem 0">
+                <span class="pill">Forecast: light rain in 3h</span>
+                <span class="pill">Evaporation: low</span>
+              </div>
+              <button id="toggle" class="btn secondary" aria-pressed="false">Pause watering</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Features -->
+  <section id="features" aria-labelledby="features-title">
+    <div class="container">
+      <h2 class="section-title" id="features-title">Features that make water work smarter</h2>
+      <div class="grid-3">
+        <article class="feature">
+          <span class="pill">Sensors</span>
+          <h4>Real-time moisture + temperature</h4>
+          <p class="subtitle">Soil probes track root-zone moisture and microclimate to optimize watering decisions.</p>
+        </article>
+        <article class="feature">
+          <span class="pill">Automation</span>
+          <h4>Weather-aware scheduling</h4>
+          <p class="subtitle">Skips cycles before rain and adjusts for heatwaves to prevent stress and runoff.</p>
+        </article>
+        <article class="feature">
+          <span class="pill">Control</span>
+          <h4>Zone-by-zone precision</h4>
+          <p class="subtitle">Manage drip lines, sprinklers, and valves independently for mixed crops.</p>
+        </article>
+        <article class="feature">
+          <span class="pill">Monitoring</span>
+          <h4>Live dashboard</h4>
+          <p class="subtitle">Visualize moisture trends, usage, and alerts—on mobile and desktop.</p>
+        </article>
+        <article class="feature">
+          <span class="pill">Sustainability</span>
+          <h4>Water savings reports</h4>
+          <p class="subtitle">Automatic weekly summaries help you track impact and ROI.</p>
+        </article>
+        <article class="feature">
+          <span class="pill">Integrations</span>
+          <h4>API + smart home</h4>
+          <p class="subtitle">Connect with weather services and home assistants for voice control.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how" aria-labelledby="how-title">
+    <div class="container">
+      <h2 class="section-title" id="how-title">How it works</h2>
+      <div class="how">
+        <div class="step">
+          <div class="num">1</div>
+          <h4>Place sensors</h4>
+          <p class="subtitle">Insert moisture probes near roots and pair them with the controller.</p>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <h4>Map zones</h4>
+          <p class="subtitle">Group valves by crop and soil type to personalize schedules.</p>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <h4>Set goals</h4>
+          <p class="subtitle">Choose water-saving or yield-boosting mode—automation does the rest.</p>
+        </div>
+      </div>
+
+      <div class="cta-band" style="margin-top:1.2rem">
+        <div>
+          <strong>Want tailored recommendations?</strong>
+          <p class="subtitle" style="margin:.2rem 0 0">Share your crop and soil type to get zone presets.</p>
+        </div>
+        <a href="#contact" class="btn">Get a custom plan</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo -->
+  <section id="demo" aria-labelledby="demo-title">
+    <div class="container">
+      <h2 class="section-title" id="demo-title">Live demo — simulate soil moisture</h2>
+      <p class="subtitle">Drag the slider in the hero panel to see how valve state and advice adapt in real time.</p>
+      <div class="grid-3" style="margin-top:1rem">
+        <div class="feature">
+          <h4>Dry soil (< 30%)</h4>
+          <p class="subtitle">Valve turns on; schedule extends to prevent wilting.</p>
+        </div>
+        <div class="feature">
+          <h4>Optimal (30–70%)</h4>
+          <p class="subtitle">Smart pulses maintain ideal moisture; rain is factored in.</p>
+        </div>
+        <div class="feature">
+          <h4>Wet soil (> 70%)</h4>
+          <p class="subtitle">Valve pauses; runoff warnings prevent waterlogging.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" aria-labelledby="contact-title">
+    <div class="container">
+      <h2 class="section-title" id="contact-title">Get a quote</h2>
+      <p class="subtitle">Tell us your acreage and crop mix—receive a tailored sensor + valve kit plan.</p>
+      <form class="grid-3" aria-label="Contact form">
+        <div class="feature">
+          <label for="name"><strong>Name</strong></label>
+          <input id="name" type="text" placeholder="Your name" aria-required="true" style="width:100%;margin-top:.4rem;padding:.7rem;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#0e1838;color:var(--text)" />
+        </div>
+        <div class="feature">
+          <label for="email"><strong>Email</strong></label>
+          <input id="email" type="email" placeholder="name@example.com" aria-required="true" style="width:100%;margin-top:.4rem;padding:.7rem;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#0e1838;color:var(--text)" />
+        </div>
+        <div class="feature">
+          <label for="acreage"><strong>Acreage</strong></label>
+          <input id="acreage" type="number" placeholder="e.g., 2.5" min="0" step="0.1" style="width:100%;margin-top:.4rem;padding:.7rem;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#0e1838;color:var(--text)" />
+        </div>
+        <div class="feature" style="grid-column:1/-1">
+          <label for="message"><strong>Crops & soil type</strong></label>
+          <textarea id="message" rows="4" placeholder="Tomatoes on loamy soil; drip irrigation" style="width:100%;margin-top:.4rem;padding:.7rem;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#0e1838;color:var(--text)"></textarea>
+          <button type="submit" class="btn" style="margin-top:.8rem">Request plan</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="foot" role="contentinfo">
+    <div class="container foot-grid">
+      <div>
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div><span>AquaSense</span>
+        </div>
+        <small>© <span id="year"></span> AquaSense. Smart irrigation for smarter harvests.</small>
+      </div>
+      <div>
+        <strong>Company</strong>
+        <small>About</small>
+        <small>Careers</small>
+        <small>Press</small>
+      </div>
+      <div>
+        <strong>Support</strong>
+        <small>Docs</small>
+        <small>Community</small>
+        <small>Contact</small>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Live Demo Logic: Needle angle maps moisture %, updates labels and valve state.
+    const moisture = document.getElementById('moisture');
+    const needle = document.getElementById('needle');
+    const label = document.getElementById('moistureLabel');
+    const valve = document.getElementById('valveState');
+    const advice = document.getElementById('advice');
+    const toggle = document.getElementById('toggle');
+    const year = document.getElementById('year');
+
+    year.textContent = new Date().getFullYear();
+
+    let paused = false;
+
+    function moistureToAngle(p){
+      // Map 0–100% to dial rotation (-60deg dry to +60deg wet)
+      const min = -60, max = 60;
+      return min + (p/100)*(max - min);
+    }
+
+    function update(){
+      const p = Number(moisture.value);
+      const angle = moistureToAngle(p);
+      needle.style.transform = `translate(-50%,-100%) rotate(${angle}deg)`;
+
+      let zone = 'Optimal';
+      if(p < 30) zone = 'Dry';
+      else if(p > 70) zone = 'Wet';
+
+      label.textContent = `${zone} (${p}%)`;
+
+      if(paused){
+        valve.textContent = 'Manual • Paused';
+        advice.textContent = 'Watering paused. Resume to enable automation.';
+      }else{
+        if(p < 30){
+          valve.textContent = 'Auto • On';
+          advice.textContent = 'Increasing watering pulses to prevent stress.';
+        }else if(p <= 70){
+          valve.textContent = 'Auto • Pulsed';
+          advice.textContent = 'Maintaining ideal moisture with short cycles.';
+        }else{
+          valve.textContent = 'Auto • Off';
+          advice.textContent = 'Pausing to avoid waterlogging and runoff.';
+        }
+      }
+    }
+
+    moisture.addEventListener('input', update);
+    toggle.addEventListener('click', ()=>{
+      paused = !paused;
+      toggle.setAttribute('aria-pressed', String(paused));
+      toggle.textContent = paused ? 'Resume automation' : 'Pause watering';
+      update();
+    });
+
+    update();
+  </script>
+  </body>
+  </html>
